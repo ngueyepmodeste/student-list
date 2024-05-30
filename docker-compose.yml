@@ -1,0 +1,42 @@
+#version de notre docker-compose
+version: '3.8'
+services: 
+# ici, je liste tous les services de mon application web
+# le service web est notre front-end ecrit en PHP    
+    web:
+# on spécifie que le service 'web' depend du service API
+      depends_on:
+        - api
+# le sevice web aura pour image php et de conteneur webapp 
+      image: php:apache
+      container_name: webapp
+# identifiants qui permettent au fontend de s'authentifier pour acceder au contenu du front-end
+      environment: 
+        - USERNAME = toto 
+        - PASSWORD = python
+# on monte le ficher website/index.html dans /var/www/html
+      volumes: 
+        - ./website:/var/www/html 
+# on met le conteneur 'webapp' dans le reseaux net1
+      networks: 
+        - net1
+      ports: 
+        - "8080:80"
+
+# service back-end     
+    api:
+
+      image: ngueyepmodeste/student:1.0
+      container_name: momo
+      volumes: 
+        - ./student_age.json:/data/student_age.jon
+      networks: 
+        - net1 
+# on spécifie le port interne (5000) d'écout du conteneur 'momo' 
+      ports: 
+        - "3000:5000"
+
+
+networks:
+    net1:
+      driver: bridge
